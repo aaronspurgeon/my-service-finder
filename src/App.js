@@ -32,18 +32,7 @@ class App extends Component {
 
   handleSubmit(query) {
     this.getVenues(query)
-
-    if(this.state.venues == []){
-      console.log(this.state.venues)
-    }else{
-      // this.getDetails('412d2800f964a520df0c1fe3')
-      setTimeout(
-        this.state.venues.forEach((item) => {
-          // console.log(item.venue.id)
-          this.getDetails(item.venue.id)
-        }),3000
-        )
-    }
+    this.triggerDetails();
   }
 
   
@@ -56,9 +45,9 @@ class App extends Component {
     this.getLocation(function (latlong) {
   
       const params = {
-        client_id: 'P0MUIV0RTLQVGVOGHMEJY2TTUPA4T0GZH3BBZI5NP5OGPWIS',
-        client_secret: 'ZNEH5BYOLXRZ5DZUBP3M11YSYIKXTULHUW0MJFZ2USJ22PAC',
-        limit: 10,
+        client_id: 'L0ZK3VLIPIYJBRFHR2D421ZUPVBOEBUPMR5PQFKWDMT1UQJA',
+          client_secret: 'HH1FKHUKXA4LNKNEGZ0PKSO3OJTJHOQS04ZWVKN3LRSB3ENG',
+        limit: 3,
         query: query,
         v: '20130619',
         ll: latlong,
@@ -69,11 +58,10 @@ class App extends Component {
       }).then(response => response.json())
       .then(response => {
         setVenueState({venues: response.response.groups[0].items});
-      });
-         
+      });  
     });
-
   } 
+
 // central park id '412d2800f964a520df0c1fe3'
   
 
@@ -82,28 +70,46 @@ class App extends Component {
   // console.log(this.state.venues)
 
 
+triggerDetails() {
+  setTimeout(() => {
+    this.state.venues.forEach((item) => {
+      // console.log(item.venue.id)
+      this.getDetails(item.venue.id)
+    })
+  }, 4000);
+}
 
 
+getDetails(VENUE_ID) {
+  const detailsEndPoint = `https://api.foursquare.com/v2/venues/${VENUE_ID}?`;
+  const params2 = {
+    client_id: 'L0ZK3VLIPIYJBRFHR2D421ZUPVBOEBUPMR5PQFKWDMT1UQJA',
+    client_secret: 'HH1FKHUKXA4LNKNEGZ0PKSO3OJTJHOQS04ZWVKN3LRSB3ENG',
+    v: '20130619'
+  };
 
-  getDetails(VENUE_ID) {
-    const detailsEndPoint = `https://api.foursquare.com/v2/venues/${VENUE_ID}?`;
-    const params2 = {
-      client_id: 'L0ZK3VLIPIYJBRFHR2D421ZUPVBOEBUPMR5PQFKWDMT1UQJA',
-      client_secret: 'HH1FKHUKXA4LNKNEGZ0PKSO3OJTJHOQS04ZWVKN3LRSB3ENG',
-      v: '20130619'
-    };
+  // let setDetailsState = this.setState.bind(this)
 
-    let setDetailsState = this.setState.bind(this)
-
-    fetch(detailsEndPoint + new URLSearchParams(params2), {
+  fetch(detailsEndPoint + new URLSearchParams(params2), {
       method: 'GET'
     }).then(response => response.json())
-      .then(response => {
-        setDetailsState(
-          console.log(response.response.venue)
-        );
-      })
-  }
+    .then(response => {
+      // setDetailsState(
+        const photo = response.response.venue;
+        const venueMatch = this.state.venues.find(venue => VENUE_ID === photo.id);
+        const newVenueObject = Object.assign(venueMatch, photo);
+        this.setState({
+          venues: Object.assign(this.state.venues, newVenueObject)
+        });
+        console.log(photo)
+      // );
+    })
+}
+
+
+
+
+  
 
 
   render() {
