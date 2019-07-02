@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import 'whatwg-fetch';
-import { Venues } from './Venues';
-import { Search } from './Search';
-import Dropdown from './Dropdown';
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import 'whatwg-fetch'
+import { Search } from './components/Search'
+import VenueList from './components/VenueList'
+import Dropdown from './components/Dropdown'
 
 
 class App extends Component {
@@ -24,7 +24,6 @@ class App extends Component {
   }
 
   getLocation(callback) {
-
     navigator.geolocation.getCurrentPosition(function(location) {
       callback(location.coords.latitude + ',' + location.coords.longitude)
     })
@@ -62,20 +61,18 @@ class App extends Component {
   }
 
   render() {
-    var venueList = this.state.venues.map((item, i) =>
-      <Venues key={i} name={item.venue.name} />
-    );
+    // var venueList = this.state.venues.map((item, i) =>
+      // <Venues key={i} name={item.venue.name} />
+    // );
   
     return (
       <div className="mainDiv">
         
         <Dropdown />
         <Search onSubmit={(value)=>this.handleSubmit(value)}/>
-        
-        <ul>
-          {venueList}
-        </ul>
-        
+        <VenueList
+         venues={this.state.venues}
+        />
       </div>
     );
   }
