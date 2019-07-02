@@ -31,7 +31,19 @@ class App extends Component {
   };
 
   handleSubmit(query) {
-    this.getVenues(query);
+    this.getVenues(query)
+
+    if(this.state.venues == []){
+      console.log(this.state.venues)
+    }else{
+      // this.getDetails('412d2800f964a520df0c1fe3')
+      setTimeout(
+        this.state.venues.forEach((item) => {
+          // console.log(item.venue.id)
+          this.getDetails(item.venue.id)
+        }),3000
+        )
+    }
   }
 
   
@@ -39,7 +51,6 @@ class App extends Component {
   getVenues(query) {
   
     let setVenueState = this.setState.bind(this);
-    // let VENUE_ID = 'XXX123YYY';
     const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
     
     this.getLocation(function (latlong) {
@@ -60,20 +71,19 @@ class App extends Component {
         setVenueState({venues: response.response.groups[0].items});
       });
          
-    },
+    });
 
-    // this.state.venues.forEach((item) => {
-      // this.getDetails(item.venue.id);
-      // this.getDetails('412d2800f964a520df0c1fe3'),
-      
-    // })
-     
-    this.getDetails('412d2800f964a520df0c1fe3'),
-    console.log(this.state.venues)
-    );
   } 
 // central park id '412d2800f964a520df0c1fe3'
   
+
+  // this.getDetails('412d2800f964a520df0c1fe3')
+
+  // console.log(this.state.venues)
+
+
+
+
 
   getDetails(VENUE_ID) {
     const detailsEndPoint = `https://api.foursquare.com/v2/venues/${VENUE_ID}?`;
@@ -90,7 +100,7 @@ class App extends Component {
     }).then(response => response.json())
       .then(response => {
         setDetailsState(
-          console.log(response)
+          console.log(response.response.venue)
         );
       })
   }
