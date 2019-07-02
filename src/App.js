@@ -52,19 +52,15 @@ class App extends Component {
   
       fetch(venuesEndpoint + new URLSearchParams(params), {
         method: 'GET'
-      }).then(response => response.json()).then(response => {
+      }).then(response => response.json())
+      .then(response => {
         setVenueState({venues: response.response.groups[0].items});
       });
-  
     });
   
   }
 
   render() {
-    // var venueList = this.state.venues.map((item, i) =>
-      // <Venues key={i} name={item.venue.name} />
-    // );
-  
     return (
       <div className="mainDiv">
         

@@ -8,6 +8,7 @@ export default class VenueList extends Component {
           {this.props.venues && this.props.venues.map((item, i) =>
               <Venue key = {i}
                 name={item.venue.name}
+                location={item.venue.location.address}
                 // {...this.props}
               />
             )
