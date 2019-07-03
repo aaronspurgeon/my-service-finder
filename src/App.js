@@ -4,6 +4,7 @@ import 'whatwg-fetch'
 import { Search } from './components/Search'
 import VenueList from './components/VenueList'
 import Dropdown from './components/Dropdown'
+// import { get } from 'http';
 
 
 class App extends Component {
@@ -13,14 +14,14 @@ class App extends Component {
     super();
 
     this.state = {
-      venues: []
-    };
-    
-    
+      venues: [],
+      images: []
+    }; 
   }
 
   componentDidMount() {
-    this.getVenues();
+    // this.getVenues();
+    // this.getDetails();
   }
 
   getLocation(callback) {
@@ -30,41 +31,88 @@ class App extends Component {
   };
 
   handleSubmit(query) {
-    this.getVenues(query);
+    this.getVenues(query)
+    this.triggerDetails();
   }
+
   
+
   getVenues(query) {
   
     let setVenueState = this.setState.bind(this);
-  
     const venuesEndpoint = 'https://api.foursquare.com/v2/venues/explore?';
-  
+    
     this.getLocation(function (latlong) {
   
       const params = {
-        client_id: 'P0MUIV0RTLQVGVOGHMEJY2TTUPA4T0GZH3BBZI5NP5OGPWIS',
-        client_secret: 'ZNEH5BYOLXRZ5DZUBP3M11YSYIKXTULHUW0MJFZ2USJ22PAC',
-        limit: 10,
+        client_id: 'L0ZK3VLIPIYJBRFHR2D421ZUPVBOEBUPMR5PQFKWDMT1UQJA',
+          client_secret: 'HH1FKHUKXA4LNKNEGZ0PKSO3OJTJHOQS04ZWVKN3LRSB3ENG',
+        limit: 3,
         query: query,
         v: '20130619',
-        ll: latlong
+        ll: latlong,
       };
-  
+
       fetch(venuesEndpoint + new URLSearchParams(params), {
         method: 'GET'
-      }).then(response => response.json()).then(response => {
+      }).then(response => response.json())
+      .then(response => {
         setVenueState({venues: response.response.groups[0].items});
-      });
-  
+      });  
     });
+  } 
+
+// central park id '412d2800f964a520df0c1fe3'
   
-  }
+
+  // this.getDetails('412d2800f964a520df0c1fe3')
+
+  // console.log(this.state.venues)
+
+
+triggerDetails() {
+  setTimeout(() => {
+    this.state.venues.forEach((item) => {
+      // console.log(item.venue.id)
+      this.getDetails(item.venue.id)
+    })
+  }, 4000);
+}
+
+
+getDetails(VENUE_ID) {
+  const detailsEndPoint = `https://api.foursquare.com/v2/venues/${VENUE_ID}?`;
+  const params2 = {
+    client_id: 'L0ZK3VLIPIYJBRFHR2D421ZUPVBOEBUPMR5PQFKWDMT1UQJA',
+    client_secret: 'HH1FKHUKXA4LNKNEGZ0PKSO3OJTJHOQS04ZWVKN3LRSB3ENG',
+    v: '20130619'
+  };
+
+  // let setDetailsState = this.setState.bind(this)
+
+  fetch(detailsEndPoint + new URLSearchParams(params2), {
+      method: 'GET'
+    }).then(response => response.json())
+    .then(response => {
+      // setDetailsState(
+        const photo = response.response.venue;
+        const venueMatch = this.state.venues.find(venue => VENUE_ID === photo.id);
+        const newVenueObject = Object.assign(venueMatch, photo);
+        this.setState({
+          venues: Object.assign(this.state.venues, newVenueObject)
+        });
+        console.log(`https://fastly.4sqi.net/img/general/200x200${response.response.venue.bestPhoto.suffix}`)
+      // );
+    })
+}
+
+
+
+
+  
+
 
   render() {
-    // var venueList = this.state.venues.map((item, i) =>
-      // <Venues key={i} name={item.venue.name} />
-    // );
-  
     return (
       <div className="mainDiv">
         
