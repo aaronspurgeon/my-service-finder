@@ -101,7 +101,7 @@ getDetails(VENUE_ID) {
         this.setState({
           venues: Object.assign(this.state.venues, newVenueObject)
         });
-        console.log(photo)
+        console.log(`https://fastly.4sqi.net/img/general/200x200${response.response.venue.bestPhoto.suffix}`)
       // );
     })
 }
